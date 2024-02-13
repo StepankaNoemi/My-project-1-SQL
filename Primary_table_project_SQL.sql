@@ -102,5 +102,6 @@ SELECT *
 	ORDER BY e.final_year ASC,
 		e.industry_branch_code_final ASC, 
 		g.price_category ASC
+)
 ;
 
