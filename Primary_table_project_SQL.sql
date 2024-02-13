@@ -1,6 +1,6 @@
 
 
-CREATE TABLE t_zkouska_pro_projekt_table_3 AS (
+CREATE TABLE t_stepanka_neumannova_project_SQL_primary_final AS (
 WITH basic_payroll AS (
 	SELECT 
 		cp.id,
