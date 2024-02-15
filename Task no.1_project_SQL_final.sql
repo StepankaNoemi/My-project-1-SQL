@@ -40,5 +40,5 @@ WHERE industry_branch_code_final NOT IN (
 	);
 
 /*
-klauzule WHERE annual_percentage_increase <= 0 použita k selekci odvětví, u kterých mzda průběžně rostla bez poklesu či stagnace k předešlému roku
+klauzule WHERE...NOT IN ( annual_percentage_increase <= 0) použita k selekci odvětví, u kterých mzda průběžně rostla bez poklesu či stagnace k předešlému roku
 */
