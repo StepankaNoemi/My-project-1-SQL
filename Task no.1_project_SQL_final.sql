@@ -36,5 +36,9 @@ WHERE industry_branch_code_final NOT IN (
 	SELECT 
 		industry_branch_code_final
 	FROM calculation_table
-	WHERE annual_percentage_increase <0
+	WHERE annual_percentage_increase <=0
 	);
+
+/*
+klauzule WHERE annual_percentage_increase <= 0 použita k selekci odvětví, u kterých mzda průběžně rostla bez poklesu či stagnace k předešlému roku
+*/
