@@ -1,5 +1,4 @@
 
-
 WITH basic_payroll AS (
 	SELECT 
 		a.*,
