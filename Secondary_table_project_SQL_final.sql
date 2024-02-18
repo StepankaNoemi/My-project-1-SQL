@@ -1,4 +1,5 @@
-CREATE TABLE t_stepanka_neumannova_project_SQL_secondary_final AS (
+
+CREATE OR REPLACE TABLE t_stepanka_neumannova_project_SQL_secondary_final AS (
 	WITH basic AS (
 		SELECT 
 			continent,
@@ -21,12 +22,12 @@ CREATE TABLE t_stepanka_neumannova_project_SQL_secondary_final AS (
 		currency_code,
 		currency_name,
 		`year`,
-		round (GDP,0) AS GDP_round,
+		round (GDP,0) AS gdp_round,
 		gini,
 		population
 	FROM basic_2
 	WHERE country IS NOT NULL
-		AND `year` BETWEEN '2006' AND '2018'
+		AND `year` BETWEEN 2006 AND 2018
 	ORDER BY country_eu ASC,
 			`year` ASC
 );
