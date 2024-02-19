@@ -1,5 +1,6 @@
-
-/* step no.1 */
+/* 
+ First step - creating view
+ */
 
 CREATE OR REPLACE VIEW v_annual_percentage_increase_food_price AS 
 	WITH basic  AS (
@@ -17,7 +18,7 @@ CREATE OR REPLACE VIEW v_annual_percentage_increase_food_price AS
 			ORDER BY name_product ASC,
 				`year` ASC 	
 		) b
-		WHERE price_category <> '212101'
+		WHERE price_category <> 212101
 	)
 	SELECT 
 		*,
@@ -26,7 +27,9 @@ CREATE OR REPLACE VIEW v_annual_percentage_increase_food_price AS
 	WHERE previous_avg_price IS NOT NULL 
 ;
 
-/* step no.2 */
+/* 
+ Second step - calculation and final selection
+*/
 
 SELECT 
 	name_product,
@@ -35,5 +38,3 @@ FROM v_annual_percentage_increase_food_price
 GROUP BY name_product
 ORDER BY avg_annual_percent_increase ASC
 LIMIT 1;
-
-
