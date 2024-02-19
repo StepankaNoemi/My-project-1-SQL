@@ -46,3 +46,33 @@ WHERE price_category <> 2000001
 GROUP BY `year`
 )ai
 	ON cp.`year` = ai.`year`;
+
+
+	/*
+ Additional query - overview of the development of the annual increase for each food item 
+ compared to the gross wage
+ */
+
+WITH connection_food_branch AS (
+	SELECT 
+		cp.`year`,
+		cp.annual_percent_increase_all_branch,
+		fp.price_category,
+		fp.name_product,
+		fp.price_value_unit,
+		fp.annual_percentage_increase
+	FROM (
+		SELECT
+			*
+		FROM v_annual_percentage_increase_food_price 
+		WHERE price_category <> 2000001
+	)fp
+	LEFT JOIN v_annual_percent_increase_all_branches cp
+		ON cp.`year` = fp.`year`
+)
+SELECT 
+	*,
+	(annual_percentage_increase - annual_percent_increase_all_branch) AS difference
+FROM connection_food_branch
+WHERE (annual_percentage_increase - annual_percent_increase_all_branch)>10
+ORDER BY `year` ASC;
