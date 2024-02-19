@@ -1,4 +1,4 @@
-CREATE TABLE  t_stepanka_neumannova_project_SQL_primary_final AS (
+CREATE OR REPLACE TABLE  t_stepanka_neumannova_project_SQL_primary_final AS (
 	WITH basic_payroll AS (
 		SELECT 
 			cp.id,
@@ -11,7 +11,7 @@ CREATE TABLE  t_stepanka_neumannova_project_SQL_primary_final AS (
 			cpc.name AS calculation_method,
 			cp.industry_branch_code,
 			CASE 
-				WHEN cp.industry_branch_code IS NULL THEN 'all_branches'
+				WHEN cp.industry_branch_code IS NULL THEN 'všechna odvětví'
 				ELSE industry_branch_code
 			END AS industry_branch_code_final,
 			cpib.name AS branch_name,
@@ -25,18 +25,18 @@ CREATE TABLE  t_stepanka_neumannova_project_SQL_primary_final AS (
 		LEFT JOIN czechia_payroll_calculation cpc 
 			ON cp.calculation_code = cpc.code 
 		LEFT JOIN czechia_payroll_industry_branch cpib 
-			ON cp.industry_branch_code = cpib.code 
-		WHERE cp.value_type_code = '5958'
-			AND cp.calculation_code = '200'				
+			ON cp.industry_branch_code = cpib.code 	
+		WHERE cp.value_type_code = 5958
+			AND cp.calculation_code = 200		
 	),
 	avg_payroll_year AS (
 		SELECT 
 			industry_branch_code_final,
 			payroll_year,
-			round (avg(value), 2) AS average_payroll_year
+			round (avg(value), 2) AS average_payroll_value
 		FROM basic_payroll
 		GROUP BY industry_branch_code_final,
-				payroll_year
+				payroll_year			
 	),
 	final_select_payroll AS (
 		SELECT 
@@ -47,15 +47,16 @@ CREATE TABLE  t_stepanka_neumannova_project_SQL_primary_final AS (
 			a.calculation_method,
 			a.industry_branch_code_final,
 			a.branch_name,
-			b.average_payroll_year
+			b.average_payroll_value
 		FROM basic_payroll a 
 		JOIN avg_payroll_year b 
 			ON a.payroll_year = b.payroll_year
 			AND a.industry_branch_code_final = b.industry_branch_code_final
-		ORDER BY a.industry_branch_code ASC, final_year ASC
+		ORDER BY a.industry_branch_code_final ASC, 
+			final_year ASC	
 	),
 	basic_price AS (
-		SELECT 
+	SELECT 
 			p.*,
 			YEAR(date_from)AS price_year,
 			p2.name,
@@ -73,7 +74,8 @@ CREATE TABLE  t_stepanka_neumannova_project_SQL_primary_final AS (
 		FROM basic_price
 		GROUP BY category_code,
 				price_year
-		ORDER BY category_code ASC, price_year ASC
+		ORDER BY category_code ASC, 
+			price_year ASC
 	), 
 	final_select_price AS (
 		SELECT 
@@ -91,13 +93,18 @@ CREATE TABLE  t_stepanka_neumannova_project_SQL_primary_final AS (
 				ON bp.price_year = cap.price_year
 				AND bp.category_code = cap.category_code
 		)bc
-		ORDER BY price_category ASC, bc.price_year ASC
 	)
-	SELECT *
-		FROM final_select_payroll e
-		JOIN final_select_price g
-			ON e.final_year = g.price_year
-		ORDER BY e.final_year ASC,
-			e.industry_branch_code_final ASC, 
-			g.price_category ASC
+	SELECT 
+		e.*,
+		g.price_category,
+		g.name_product,
+		g.price_value_unit,
+		-- g.price_year,
+		g.average_price_year
+	FROM final_select_payroll e
+	JOIN final_select_price g
+		ON e.final_year = g.price_year
+	ORDER BY e.final_year ASC,
+		e.industry_branch_code_final ASC, 
+		g.price_category ASC			
 );
