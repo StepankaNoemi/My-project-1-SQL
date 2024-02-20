@@ -19,8 +19,8 @@ connection_price_food_gdp AS (
 	SELECT 
 	 	tsn.country_eu,
 	 	tsn.`year`,
-	 	tsn.GDP_round,
-	 	lag(tsn.GDP_round)OVER(PARTITION BY tsn.country_eu ORDER BY tsn.`year`) AS previous_gdp,
+	 	tsn.gdp_round,
+	 	lag(tsn.gdp_round)OVER(PARTITION BY tsn.country_eu ORDER BY tsn.`year`) AS previous_gdp,
 	 	aif.annual_increase_percent_all_food,
 	 	aif.annual_percent_increase_all_branch
 	FROM t_stepanka_neumannova_project_sql_secondary_final tsn
@@ -29,13 +29,14 @@ connection_price_food_gdp AS (
 		AND tsn.country_eu = 'Czech republic'	
 )
 SELECT 
-	country_eu,
 	`year`,
-	GDP_round,
-	previous_gdp,
-	round ((GDP_round - previous_gdp)/previous_gdp*100, 2)  AS increase_gdp,
+	-- gdp_round,
+	-- previous_gdp,
+	round ((gdp_round - previous_gdp)/previous_gdp*100, 2)  AS increase_gdp,
 	annual_increase_percent_all_food,
- 	annual_percent_increase_all_branch
+	LEAD(annual_increase_percent_all_food) OVER (ORDER BY `year`)  AS following_year_food,
+ 	annual_percent_increase_all_branch,
+ 	LEAD(annual_percent_increase_all_branch) OVER (ORDER BY `year`)  AS following_year_all_branch
 FROM connection_price_food_gdp
 WHERE 1=1
 	AND country_eu = 'Czech republic'
