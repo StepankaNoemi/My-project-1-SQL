@@ -4,6 +4,7 @@ WITH average_price AS (
 		`year`,
 		round (AVG (annual_percentage_increase), 2) AS annual_increase_percent_all_food
 		FROM v_annual_percentage_increase_food_price 
+		WHERE price_category <> 2000001
 		GROUP BY `year`
 ), 
 increase_food_branch AS (
@@ -20,7 +21,7 @@ connection_price_food_gdp AS (
 	 	tsn.country_eu,
 	 	tsn.`year`,
 	 	tsn.gdp_round,
-	 	lag(tsn.gdp_round)OVER(PARTITION BY tsn.country_eu ORDER BY tsn.`year`) AS previous_gdp,
+	 	LAG(tsn.gdp_round)OVER(PARTITION BY tsn.country_eu ORDER BY tsn.`year`) AS previous_gdp,
 	 	aif.annual_increase_percent_all_food,
 	 	aif.annual_percent_increase_all_branch
 	FROM t_stepanka_neumannova_project_sql_secondary_final tsn
